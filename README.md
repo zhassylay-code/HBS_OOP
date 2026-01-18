@@ -1,2 +1,5 @@
 # HBS_OOP
-hotel booking system 
+Hotel Booking System 
+Diana	Bakyt	
+Assylay	Zhengisbekova
+Sanzhar	Aubakirov
