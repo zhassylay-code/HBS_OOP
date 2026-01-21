@@ -7,4 +7,4 @@ public class Booking {
     public Long roomId;
     public LocalDate startDate;
     public LocalDate endDate;
-}
+
