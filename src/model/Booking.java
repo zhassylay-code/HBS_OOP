@@ -9,8 +9,7 @@ public class Booking {
     private LocalDate endDate;
     private double totalPrice;
 
-    public Booking(int id, int roomId, int guestId, LocalDate startDate, LocalDate endDate,
-                   double totalPrice) {
+    public Booking(int id, int roomId, int guestId, LocalDate startDate, LocalDate endDate, double totalPrice) {
         this.id = id;
         this.roomId = roomId;
         this.guestId = guestId;
