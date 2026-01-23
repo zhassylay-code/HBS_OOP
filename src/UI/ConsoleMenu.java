@@ -58,7 +58,7 @@ public class ConsoleMenu {
 
         System.out.print("Enter room ID: ");
         int roomId = scanner.nextInt();
-        scanner.nextLine(); // очистка буфера
+        scanner.nextLine();
 
 
         System.out.print("Enter your full name: ");
@@ -84,6 +84,7 @@ public class ConsoleMenu {
         System.out.println("2. Cash");
         System.out.print("Your choice: ");
 
+
         int paymentChoice = scanner.nextInt();
         scanner.nextLine();
 
@@ -93,7 +94,7 @@ public class ConsoleMenu {
         }
 
         System.out.println("\nBooking request has been successfully created.");
-
+        //надо добавить хотите продолжить?
 
     }
 
