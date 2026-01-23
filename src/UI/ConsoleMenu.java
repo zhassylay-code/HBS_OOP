@@ -2,7 +2,7 @@ package UI;
 import Controller.BookingController;
 import Controller.GuestController;
 import java.util.Scanner;
-
+import java.time.LocalDate;
 
 public class ConsoleMenu {
 
@@ -36,7 +36,65 @@ public class ConsoleMenu {
         System.out.print("Your choice: ");
     }
     private void bookRoom() {
-        System.out.print("");
+        System.out.print("Enter check-in date (YYYY_MM-DD): ");
+        LocalDate startDate = LocalDate.parse(scanner.nextLine());
+
+        System.out.print("Enter check-out date (YYYY-MM-DD): ");
+        LocalDate endDate = LocalDate.parse(scanner.nextLine());
+
+        LocalDate today = LocalDate.now();
+
+        if (startDate.isBefore(today)) {
+            System.out.println("Check-in date cannot be in the past.");
+            return;
+        }
+
+        if (endDate.isBefore(startDate)) {
+            System.out.println("Check-out date cannot be before check-in date.");
+            return;
+        }
+        System.out.println("Available rooms:");
+        bookingController.showAvailableRooms(startDate, endDate);
+
+        System.out.print("Enter room ID: ");
+        int roomId = scanner.nextInt();
+        scanner.nextLine(); // очистка буфера
+
+
+        System.out.print("Enter your full name: ");
+        String fullName = scanner.nextLine();
+        if (fullName.isEmpty()) {
+            System.out.println("Name cannot be empty.");
+            return;
+        }
+
+        System.out.print("Enter your passport number: ");
+        String document = scanner.nextLine();
+
+        if (document.isEmpty()) {
+            System.out.println("Name cannot be empty.");
+            return;
+        }
+
+        double price = bookingController.getPrice(roomId, startDate, endDate);
+        System.out.println("Total price: " + price);
+
+        System.out.println("Choose payment method:");
+        System.out.println("1. Card");
+        System.out.println("2. Cash");
+        System.out.print("Your choice: ");
+
+        int paymentChoice = scanner.nextInt();
+        scanner.nextLine();
+
+        if (paymentChoice != 1 && paymentChoice != 2) {
+            System.out.println("Invalid payment method.");
+            return;
+        }
+
+        System.out.println("\nBooking request has been successfully created.");
+
+
     }
 
     private int readInt() {
