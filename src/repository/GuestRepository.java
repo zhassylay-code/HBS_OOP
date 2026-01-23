@@ -1,4 +1,7 @@
 package repository;
 
-public class GuestRepository {
+import entity.Guest;
 
+public interface GuestRepository {
+    Guest findById(Long id);
+}
