@@ -1,31 +1,39 @@
 import Controller.BookingController;
 import Controller.GuestController;
 import UI.ConsoleMenu;
-import repository.BookingRepository;
-import repository.GuestRepository;
-import repository.RoomRepository;
-import repository.jdbc.JdbcBookingRepository;
-import repository.jdbc.JdbcGuestRepository;
-import repository.jdbc.JdbcRoomRepository;
+
+import repository.*;
 import service.BookingService;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+
 public class Main {
+
     public static void main(String[] args) {
+        try {
+            Connection conn = DriverManager.getConnection(
+                    "jdbc:postgresql://localhost:5432/hotel_booking_db",
+                    "postgres",
+                    "0000"
+            );
 
-   
-        RoomRepository roomRepo = new JdbcRoomRepository();
-        BookingRepository bookingRepo = new JdbcBookingRepository();
-        GuestRepository guestRepo = new JdbcGuestRepository();
+            RoomRepository roomRepo = new RoomRepositoryImpl(conn);
+            BookingRepository bookingRepo = new BookingRepositoryImpl(conn);
 
-  
-        BookingService bookingService = new BookingService(bookingRepo, roomRepo);
+            BookingService bookingService = new BookingService(bookingRepo, roomRepo);
 
-   
-        BookingController bookingController = new BookingController(bookingService, roomRepo, bookingRepo);
-        GuestController guestController = new GuestController(guestRepo);
+            BookingController bookingController =
+                    new BookingController(bookingService, roomRepo, bookingRepo);
 
-   
-        ConsoleMenu menu = new ConsoleMenu(bookingController, guestController);
-        menu.start();
+
+            GuestController guestController = new GuestController(null);
+
+            ConsoleMenu menu = new ConsoleMenu(bookingController, guestController);
+            menu.start();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
