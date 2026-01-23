@@ -1,4 +1,4 @@
-package service; //Business logic
+package service; 
 
 import entity.Booking;
 import entity.Room;
@@ -9,7 +9,7 @@ import repository.RoomRepository;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit; //used to calculate number of days between dates(java)
+import java.time.temporal.ChronoUnit; 
 
 public class BookingService {
 
