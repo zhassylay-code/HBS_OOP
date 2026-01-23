@@ -2,6 +2,8 @@ package UI;
 
 import Controller.BookingController;
 import Controller.GuestController;
+import exception.InvalidBookingDatesException;
+import exception.RoomAlreadyBookedException;
 
 import java.time.LocalDate;
 import java.util.Scanner;
@@ -18,6 +20,15 @@ public class ConsoleMenu {
         this.guestController = guestController;
     }
 
+    private void Header(String title) {
+        System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        System.out.println(title.toUpperCase());
+        System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    }
+
+    private String paymentMethodToString(int choice) {
+        return choice == 1 ? "Card" : "Cash";
+    }
     public void start() {
         System.out.println("Welcome to the Grand hotel! How can we help you?");
 
@@ -29,26 +40,16 @@ public class ConsoleMenu {
                 case 1 -> bookRoom();
                 case 2 -> guestController.showProfile();
                 case 3 -> {
-                    System.out.println("Thank you for choosing our hotel! We would glad to see you again!.");
+                    System.out.println("Thank you for choosing our Grand hotel! We would be glad to see you again!");
                     return;
                 }
-                default -> System.out.println("Invalid option. Please try again(");
+                default -> System.out.println("Invalid option. Please try again.");
             }
         }
     }
-    private boolean askToContinue() {
-        System.out.println("\nDo you want to continue?");
-        System.out.println("1. Yes");
-        System.out.println("2. No");
-        System.out.print("Your choice: ");
-
-        int choice = readInt();
-        return choice == 1;
-    }
-
 
     private void printMenu() {
-        System.out.println("1. I want to book a room");
+        System.out.println("\n1. I want to book a room");
         System.out.println("2. I want to see my profile");
         System.out.println("3. Exit");
         System.out.print("Your choice: ");
@@ -56,11 +57,12 @@ public class ConsoleMenu {
 
     private void bookRoom() {
         try {
+
             System.out.print("Enter check-in date (YYYY-MM-DD): ");
-            LocalDate startDate = LocalDate.parse(scanner.nextLine());
+            LocalDate startDate = LocalDate.parse(scanner.nextLine().trim());
 
             System.out.print("Enter check-out date (YYYY-MM-DD): ");
-            LocalDate endDate = LocalDate.parse(scanner.nextLine());
+            LocalDate endDate = LocalDate.parse(scanner.nextLine().trim());
 
             LocalDate today = LocalDate.now();
 
@@ -69,37 +71,39 @@ public class ConsoleMenu {
                 return;
             }
 
-            if (endDate.isBefore(startDate)) {
-                System.out.println("Check-out date cannot be before check-in date.");
+            if (!endDate.isAfter(startDate)) {
+                System.out.println("Check-out date must be after check-in date.");
                 return;
             }
 
-            System.out.println("Available rooms:");
+
+            Header("Available rooms");
             bookingController.showAvailableRooms(startDate, endDate);
 
-            System.out.print("Enter room ID: ");
+            System.out.print("\nEnter room ID: ");
             int roomId = readInt();
 
-            System.out.print("Please enter your full name: ");
-            String fullName = scanner.nextLine();
 
+            System.out.print("Please enter your full name: ");
+            String fullName = scanner.nextLine().trim();
             if (fullName.isEmpty()) {
-                System.out.println("This field cannot be empty.");
+                System.out.println("This field cannot be empty!");
                 return;
             }
 
             System.out.print("Enter your passport number: ");
-            String document = scanner.nextLine();
-
+            String document = scanner.nextLine().trim();
             if (document.isEmpty()) {
-                System.out.println("This field cannot be empty.");
+                System.out.println("This field cannot be empty!");
                 return;
             }
+
 
             BigDecimal price = bookingController.getPrice(roomId, startDate, endDate);
             System.out.println("Total price is: " + price);
 
-            System.out.println("Please choose payment method:");
+
+            System.out.println("\nPlease choose payment method:");
             System.out.println("1. Card");
             System.out.println("2. Cash");
             System.out.print("Your choice: ");
@@ -110,24 +114,25 @@ public class ConsoleMenu {
                 return;
             }
 
+            Header("Booking confirmation:");
+            System.out.println("Guest: " + fullName);
+            System.out.println("Room ID: " + roomId);
+            System.out.println("Stay: " "from "+ startDate + " to " + endDate);
+            System.out.println("Total price: " + price + " KZT");
+            System.out.println("Payment method: " + paymentMethodToString(paymentChoice));
+
             bookingController.bookRoom(roomId, startDate, endDate);
 
-            System.out.println("Booking request has been successfully created. We are waiting for you!");
+            System.out.println("\nBooking request has been successfully created. We are waiting for you!");
 
-            if (!askToContinue()) {
-                System.out.println("Thank you for choosing our hotel! We look forward to welcoming you again.");
-                System.exit(0);
-            }
-
-        }
-
-        catch (Exception e) {
+        } catch (RoomAlreadyBookedException e) {
+            System.out.println("This room is already booked for selected dates. Please choose another room.");
+        } catch (InvalidBookingDatesException e) {
+            System.out.println("Wrong booking dates.");
+        } catch (Exception e) {
             System.out.println("Invalid input. Please try again.");
         }
-
-
     }
-
     private int readInt() {
         int value = scanner.nextInt();
         scanner.nextLine();
