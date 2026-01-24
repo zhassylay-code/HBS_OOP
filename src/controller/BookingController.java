@@ -1,4 +1,4 @@
-package Controller;
+package controller;
 
 import entity.Room;
 import repository.BookingRepository;

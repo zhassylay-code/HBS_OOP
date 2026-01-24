@@ -1,7 +1,7 @@
-package UI;
+package ui;
 
-import Controller.BookingController;
-import Controller.GuestController;
+import controller.BookingController;
+import controller.GuestController;
 import exception.InvalidBookingDatesException;
 import exception.RoomAlreadyBookedException;
 

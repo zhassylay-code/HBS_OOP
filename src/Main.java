@@ -1,6 +1,6 @@
-import Controller.BookingController;
-import Controller.GuestController;
-import UI.ConsoleMenu;
+import controller.BookingController;
+import controller.GuestController;
+import ui.ConsoleMenu;
 
 import repository.*;
 import service.BookingService;
