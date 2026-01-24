@@ -77,7 +77,7 @@ public class ConsoleMenu {
             }
 
 
-            Header("Available rooms");
+            System.out.println("Available rooms");
             bookingController.showAvailableRooms(startDate, endDate);
 
             System.out.print("\nEnter room ID: ");
