@@ -11,7 +11,7 @@ public class GuestController {
     }
 
     public void showProfile() {
-        System.out.println("Guest profile (demo)");
+        System.out.println("Guest profile:");
 
     }
 }
