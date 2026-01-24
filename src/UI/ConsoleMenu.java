@@ -117,7 +117,7 @@ public class ConsoleMenu {
             Header("Booking confirmation:");
             System.out.println("Guest: " + fullName);
             System.out.println("Room ID: " + roomId);
-            System.out.println("Stay: " "from "+ startDate + " to " + endDate);
+            System.out.println("Stay: " + "from "+ startDate + " to " + endDate);
             System.out.println("Total price: " + price + " KZT");
             System.out.println("Payment method: " + paymentMethodToString(paymentChoice));
 
