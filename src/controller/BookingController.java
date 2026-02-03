@@ -35,16 +35,17 @@ public class BookingController {
         System.out.printf("%-10s %-25s %-15s%n", "ROOM ID", "TYPE", "PRICE (KZT)");
         System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
-        for (Room room : rooms) {
-            if (!bookingRepo.isRoomBusy(room.id, startDate, endDate)) {
-                any = true;
+        rooms.stream()
+            .filter(room -> !bookingRepo.isRoomBusy(room.id, startDate, endDate))
+            .forEach(room -> {
                 System.out.printf(
-                        "%-10d %-25s %-15s%n",
-                        room.id,
-                        room.type,
-                        room.pricePerNight
-                );
-            }
+                    "%-10d %-25s %-15s%n",
+                     room.id,
+                     room.type,
+                     room.pricePerNight
+                 );
+             });
+
         }
         System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
