@@ -23,30 +23,38 @@ public class BookingController {
     }
 
     public BigDecimal getPrice(int roomId, LocalDate start, LocalDate end) {
-        return BigDecimal.ZERO;
+        Room room = roomRepo.findById((long) roomId);
+
+        if (room == null) {
+            return BigDecimal.ZERO;
+        }
+
+        return bookingService.calculatePrice(room, start, end);
     }
+
 
     public void showAvailableRooms(LocalDate startDate, LocalDate endDate) {
         List<Room> rooms = roomRepo.findAll();
 
         boolean any = false;
 
-        System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
         System.out.printf("%-10s %-25s %-15s%n", "ROOM ID", "TYPE", "PRICE (KZT)");
-        System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
-        for (Room room : rooms) {
-            if (!bookingRepo.isRoomBusy(room.id, startDate, endDate)) {
-                any = true;
-                System.out.printf(
-                        "%-10d %-25s %-15s%n",
-                        room.id,
-                        room.type,
-                        room.pricePerNight
-                );
-            }
-        }
-        System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        rooms.stream()
+                .filter(room -> !bookingRepo.isRoomBusy(room.id, startDate, endDate))
+                .forEach(room -> {
+                    System.out.printf(
+                            "%-10d %-25s %-15s%n",
+                            room.id,
+                            room.type,
+                            room.pricePerNight
+                    );
+                });
+
+
+        System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
         if (!any) {
             System.out.println("No available rooms for selected dates.");
@@ -64,4 +72,9 @@ public class BookingController {
 
         bookingService.bookRoom(room, start, end);
     }
+    public void cancelBooking(long bookingId) {
+        bookingService.cancelBooking(bookingId);
+        System.out.println("Booking has been successfully cancelled.");
+    }
+
 }

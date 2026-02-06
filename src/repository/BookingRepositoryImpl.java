@@ -55,4 +55,17 @@ public class BookingRepositoryImpl implements BookingRepository {
             throw new RuntimeException("Error saving booking", e);
         }
     }
+
+    @Override
+    public void deleteById(Long bookingId) {
+        String sql = "DELETE FROM bookings WHERE id = ?";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setLong(1, bookingId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Error deleting booking", e);
+        }
+    }
+
 }

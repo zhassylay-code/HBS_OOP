@@ -5,6 +5,7 @@ import entity.Room;
 import exception.InvalidBookingDatesException;
 import exception.RoomAlreadyBookedException;
 import repository.BookingRepository;
+import repository.BookingRepositoryImpl;
 import repository.RoomRepository;
 
 import java.math.BigDecimal;
@@ -43,4 +44,15 @@ public class BookingService {
 
         return total;
     }
+
+    public BigDecimal calculatePrice(Room room, LocalDate start, LocalDate end) {
+        long days = ChronoUnit.DAYS.between(start, end);
+        return room.pricePerNight.multiply(BigDecimal.valueOf(days));
+    }
+
+    public void cancelBooking(Long bookingId) {
+        bookingRepo.deleteById(bookingId);
+    }
+
+
 }

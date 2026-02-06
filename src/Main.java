@@ -1,6 +1,7 @@
 import controller.BookingController;
 import controller.GuestController;
 import ui.ConsoleMenu;
+import db.DatabaseConnection;
 
 import repository.*;
 import service.BookingService;
@@ -12,11 +13,7 @@ public class Main {
 
     public static void main(String[] args) {
         try {
-            Connection conn = DriverManager.getConnection(
-                    "jdbc:postgresql://localhost:5432/hotel_booking_db",
-                    "postgres",
-                    "0000"
-            );
+            Connection conn = DatabaseConnection.getInstance().getConnection();
 
             RoomRepository roomRepo = new RoomRepositoryImpl(conn);
             BookingRepository bookingRepo = new BookingRepositoryImpl(conn);
