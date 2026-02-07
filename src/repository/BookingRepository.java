@@ -1,8 +1,9 @@
 package repository;
 
 import entity.Booking;
-import java.util.List;
+
 import java.time.LocalDate;
+import java.util.List;
 
 public interface BookingRepository {
     boolean isRoomBusy(Long roomId, LocalDate start, LocalDate end);
