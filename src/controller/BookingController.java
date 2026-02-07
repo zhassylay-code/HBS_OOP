@@ -38,9 +38,9 @@ public class BookingController {
 
         boolean any = false;
 
-        System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
         System.out.printf("%-10s %-25s %-15s%n", "ROOM ID", "TYPE", "PRICE (KZT)");
-        System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
         rooms.stream()
                 .filter(room -> !bookingRepo.isRoomBusy(room.id, startDate, endDate))
@@ -54,7 +54,7 @@ public class BookingController {
                 });
 
 
-        System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
         if (!any) {
             System.out.println("No available rooms for selected dates.");
