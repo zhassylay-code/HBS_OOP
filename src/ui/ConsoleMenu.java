@@ -24,9 +24,9 @@ public class ConsoleMenu {
     }
 
     private void Header(String title) {
-        System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
         System.out.println(title.toUpperCase());
-        System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
     }
 
     private String paymentMethodToString(int choice) {

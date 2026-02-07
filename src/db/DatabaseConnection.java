@@ -11,7 +11,7 @@ public class DatabaseConnection {
     private DatabaseConnection() {
         try {
             connection = DriverManager.getConnection(
-                    "jdbc:postgresql://localhost:5433/hotel_booking_db",
+                    System.getenv("DB_URL"),
                     "postgres",
                     "0000"
             );

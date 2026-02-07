@@ -36,7 +36,8 @@ public class GuestController {
 
         List<Booking> bookings = bookingRepo.findByGuestId(guestId);
 
-        if (bookings.isEmpty()) {
+        if (bookings.isEmpty())
+    {
             System.out.println("No bookings found for this guest.");
             return;
         }
