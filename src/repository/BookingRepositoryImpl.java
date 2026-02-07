@@ -4,9 +4,8 @@ import entity.Booking;
 
 import java.sql.*;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.ArrayList;
-
+import java.util.List;
 
 public class BookingRepositoryImpl implements BookingRepository {
 
@@ -18,20 +17,23 @@ public class BookingRepositoryImpl implements BookingRepository {
 
     @Override
     public boolean isRoomBusy(Long roomId, LocalDate start, LocalDate end) {
+
+
         String sql = """
             SELECT EXISTS (
                 SELECT 1
-                FROM bookings
-                WHERE room_id = ?
-                  AND start_date < ?
-                  AND end_date > ?
+                FROM bookings b
+                JOIN rooms r ON b.room_id = r.id
+                WHERE r.id = ?
+                  AND b.start_date < ?
+                  AND b.end_date > ?
             )
             """;
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setLong(1, roomId);
-            ps.setDate(2, Date.valueOf(end));   // new end
-            ps.setDate(3, Date.valueOf(start)); // new start
+            ps.setDate(2, Date.valueOf(end));
+            ps.setDate(3, Date.valueOf(start));
 
             try (ResultSet rs = ps.executeQuery()) {
                 rs.next();
@@ -44,6 +46,8 @@ public class BookingRepositoryImpl implements BookingRepository {
 
     @Override
     public void save(Booking booking) {
+
+
         String sql = """
             INSERT INTO bookings (room_id, start_date, end_date)
             VALUES (?, ?, ?)
@@ -61,6 +65,7 @@ public class BookingRepositoryImpl implements BookingRepository {
 
     @Override
     public void deleteById(Long bookingId) {
+
         String sql = "DELETE FROM bookings WHERE id = ?";
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -73,7 +78,14 @@ public class BookingRepositoryImpl implements BookingRepository {
 
     @Override
     public List<Booking> findAll() {
-        String sql = "SELECT id, room_id, start_date, end_date FROM bookings";
+
+
+        String sql = """
+            SELECT b.id, b.room_id, b.start_date, b.end_date
+            FROM bookings b
+            ORDER BY b.start_date
+            """;
+
         List<Booking> list = new ArrayList<>();
 
         try (PreparedStatement ps = conn.prepareStatement(sql);
@@ -93,6 +105,4 @@ public class BookingRepositoryImpl implements BookingRepository {
 
         return list;
     }
-
-
 }
