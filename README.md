@@ -1,4 +1,4 @@
-<img width="1920" height="600" alt="Brown and Black Minimalist Hotel Presentation" src="https://github.com/user-attachments/assets/8fee6667-b14f-46a5-b3cb-d724179223dd" />
+![5D0A4463-6871-42D2-8673-EBC28BF08ECD_1_201_a](https://github.com/user-attachments/assets/28b255db-f48f-48de-8097-90aeb9ecfe43)
 
 # Welcome to the Grand Hotel - we look forward to hosting you!!
 Welcome to the **Grand Hotel Booking System** - a console-based Java application where users can check room availability, make bookings, and see booking details. This project was created as part of an Object-Oriented Programming course and represents a simple hotel booking system built step by step by our team.
