@@ -1,6 +1,7 @@
 package controller;
 
 import entity.Room;
+import entity.Booking;
 import repository.BookingRepository;
 import repository.RoomRepository;
 import service.BookingService;
@@ -36,30 +37,30 @@ public class BookingController {
     public void showAvailableRooms(LocalDate startDate, LocalDate endDate) {
         List<Room> rooms = roomRepo.findAll();
 
-        boolean any = false;
+        List<Room> availableRooms = rooms.stream()
+                .filter(room -> !bookingRepo.isRoomBusy(room.id, startDate, endDate))
+                .toList();
 
         System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
         System.out.printf("%-10s %-25s %-15s%n", "ROOM ID", "TYPE", "PRICE (KZT)");
         System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
-        rooms.stream()
-                .filter(room -> !bookingRepo.isRoomBusy(room.id, startDate, endDate))
-                .forEach(room -> {
-                    System.out.printf(
-                            "%-10d %-25s %-15s%n",
-                            room.id,
-                            room.type,
-                            room.pricePerNight
-                    );
-                });
-
+        availableRooms.forEach(room ->
+                System.out.printf(
+                        "%-10d %-25s %-15s%n",
+                        room.id,
+                        room.type,
+                        room.pricePerNight
+                )
+        );
 
         System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
-        if (!any) {
+        if (availableRooms.isEmpty()) {
             System.out.println("No available rooms for selected dates.");
         }
     }
+
 
     public void bookRoom(int roomId, LocalDate start, LocalDate end) {
         Room room = roomRepo.findById((long) roomId);
@@ -76,5 +77,40 @@ public class BookingController {
         bookingService.cancelBooking(bookingId);
         System.out.println("Booking has been successfully cancelled.");
     }
+
+    public List<Booking> showAllBookings() {
+        List<Booking> bookings = bookingRepo.findAll();
+
+        if (bookings.isEmpty()) {
+            System.out.println("No bookings found.");
+            return bookings;
+        }
+
+        System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        System.out.printf(
+                "%-12s %-10s %-15s %-15s%n",
+                "BOOKING ID",
+                "ROOM ID",
+                "START DATE",
+                "END DATE"
+        );
+        System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+
+        bookings.forEach(b ->
+                System.out.printf(
+                        "%-12d %-10d %-15s %-15s%n",
+                        b.id,
+                        b.roomId,
+                        b.startDate,
+                        b.endDate
+                )
+        );
+
+        System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━2");
+
+        return bookings;
+    }
+
+
 
 }

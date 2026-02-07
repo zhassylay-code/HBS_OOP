@@ -4,6 +4,9 @@ import entity.Booking;
 
 import java.sql.*;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.ArrayList;
+
 
 public class BookingRepositoryImpl implements BookingRepository {
 
@@ -67,5 +70,29 @@ public class BookingRepositoryImpl implements BookingRepository {
             throw new RuntimeException("Error deleting booking", e);
         }
     }
+
+    @Override
+    public List<Booking> findAll() {
+        String sql = "SELECT id, room_id, start_date, end_date FROM bookings";
+        List<Booking> list = new ArrayList<>();
+
+        try (PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                Booking b = new Booking();
+                b.id = rs.getLong("id");
+                b.roomId = rs.getLong("room_id");
+                b.startDate = rs.getDate("start_date").toLocalDate();
+                b.endDate = rs.getDate("end_date").toLocalDate();
+                list.add(b);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return list;
+    }
+
 
 }

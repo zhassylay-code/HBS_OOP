@@ -4,10 +4,13 @@ import controller.BookingController;
 import controller.GuestController;
 import exception.InvalidBookingDatesException;
 import exception.RoomAlreadyBookedException;
+import entity.Booking;
 
 import java.time.LocalDate;
 import java.util.Scanner;
 import java.math.BigDecimal;
+import java.util.List;
+
 
 public class ConsoleMenu {
 
@@ -39,7 +42,8 @@ public class ConsoleMenu {
             switch (choice) {
                 case 1 -> bookRoom();
                 case 2 -> guestController.showProfile();
-                case 3 -> {
+                case 3 -> cancelBooking();
+                case 4 -> {
                     System.out.println("Thank you for choosing our Grand hotel! We would be glad to see you again!");
                     return;
                 }
@@ -51,7 +55,9 @@ public class ConsoleMenu {
     private void printMenu() {
         System.out.println("\n1. I want to book a room");
         System.out.println("2. I want to see my profile");
-        System.out.println("3. Exit");
+        System.out.println("3. Cancel booking");
+        System.out.println("4. Exit");
+
         System.out.print("Your choice: ");
     }
 
@@ -138,4 +144,18 @@ public class ConsoleMenu {
         scanner.nextLine();
         return value;
     }
+    private void cancelBooking() {
+        List<Booking> bookings = bookingController.showAllBookings();
+
+
+        if (bookings.isEmpty()) {
+            return;
+        }
+
+        System.out.print("Enter booking ID to cancel: ");
+        long bookingId = readInt();
+
+        bookingController.cancelBooking(bookingId);
+    }
+
 }
