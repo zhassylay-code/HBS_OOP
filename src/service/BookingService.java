@@ -2,10 +2,11 @@ package service;
 
 import entity.Booking;
 import entity.Room;
+import entity.Guest;
+
 import exception.InvalidBookingDatesException;
 import exception.RoomAlreadyBookedException;
 import repository.BookingRepository;
-import repository.BookingRepositoryImpl;
 import repository.RoomRepository;
 
 import java.math.BigDecimal;
@@ -22,28 +23,29 @@ public class BookingService {
         this.roomRepo = r;
     }
 
-    public BigDecimal bookRoom(Room room, LocalDate start, LocalDate end) {
-
-        if (!start.isBefore(end)) {
-            throw new InvalidBookingDatesException("Wrong dates");
-        }
+    public BigDecimal bookRoom(Room room,
+                               Guest guest,
+                               LocalDate start,
+                               LocalDate end) {
 
         if (bookingRepo.isRoomBusy(room.id, start, end)) {
             throw new RoomAlreadyBookedException("Room is busy");
         }
 
         long days = ChronoUnit.DAYS.between(start, end);
-        BigDecimal total = room.pricePerNight.multiply(BigDecimal.valueOf(days));
+        BigDecimal total =
+                room.pricePerNight.multiply(BigDecimal.valueOf(days));
 
         Booking booking = new Booking();
         booking.roomId = room.id;
+        booking.guestId = guest.id;
         booking.startDate = start;
         booking.endDate = end;
 
         bookingRepo.save(booking);
-
         return total;
     }
+
 
     public BigDecimal calculatePrice(Room room, LocalDate start, LocalDate end) {
         long days = ChronoUnit.DAYS.between(start, end);

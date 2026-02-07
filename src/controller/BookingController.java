@@ -2,7 +2,10 @@ package controller;
 
 import entity.Room;
 import entity.Booking;
+import entity.Guest;
+
 import repository.BookingRepository;
+import repository.GuestRepository;
 import repository.RoomRepository;
 import service.BookingService;
 
@@ -14,13 +17,16 @@ public class BookingController {
     private final BookingService bookingService;
     private final RoomRepository roomRepo;
     private final BookingRepository bookingRepo;
+    private final GuestRepository guestRepo;
 
     public BookingController(BookingService bookingService,
                              RoomRepository roomRepo,
-                             BookingRepository bookingRepo) {
+                             BookingRepository bookingRepo,
+                             GuestRepository guestRepo) {
         this.bookingService = bookingService;
         this.roomRepo = roomRepo;
         this.bookingRepo = bookingRepo;
+        this.guestRepo = guestRepo;
     }
 
     public BigDecimal getPrice(int roomId, LocalDate start, LocalDate end) {
@@ -62,17 +68,30 @@ public class BookingController {
     }
 
 
-    public void bookRoom(int roomId, LocalDate start, LocalDate end) {
-        Room room = roomRepo.findById((long) roomId);
+    public BigDecimal bookRoom(int roomId,
+                               String fullName,
+                               String document,
+                               LocalDate start,
+                               LocalDate end) {
 
+        Room room = roomRepo.findById((long) roomId);
         if (room == null) {
-            System.out.println("Room with ID " + roomId + " not found.");
-            return;
+            throw new RuntimeException("Room not found");
         }
 
+        Guest guest = guestRepo.findByDocument(document);
 
-        bookingService.bookRoom(room, start, end);
+        if (guest == null) {
+            guest = new Guest();
+            guest.fullName = fullName;
+            guest.document = document;
+            guest = guestRepo.save(guest);
+        }
+
+        return bookingService.bookRoom(room, guest, start, end);
     }
+
+
     public void cancelBooking(long bookingId) {
         bookingService.cancelBooking(bookingId);
         System.out.println("Booking has been successfully cancelled.");

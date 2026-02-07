@@ -41,7 +41,11 @@ public class ConsoleMenu {
 
             switch (choice) {
                 case 1 -> bookRoom();
-                case 2 -> guestController.showProfile();
+                case 2 -> {
+                    System.out.print("Enter your guest ID: ");
+                    long guestId = readInt();
+                    guestController.showProfile(guestId);
+                }
                 case 3 -> cancelBooking();
                 case 4 -> {
                     System.out.println("Thank you for choosing our Grand hotel! We would be glad to see you again!");
@@ -127,7 +131,14 @@ public class ConsoleMenu {
             System.out.println("Total price: " + price + " KZT");
             System.out.println("Payment method: " + paymentMethodToString(paymentChoice));
 
-            bookingController.bookRoom(roomId, startDate, endDate);
+            bookingController.bookRoom(
+                    roomId,
+                    fullName,
+                    document,
+                    startDate,
+                    endDate
+            );
+
 
             System.out.println("\nBooking request has been successfully created. We are waiting for you!");
 

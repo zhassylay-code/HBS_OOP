@@ -93,6 +93,35 @@ public class BookingRepositoryImpl implements BookingRepository {
 
         return list;
     }
+    @Override
+    public List<Booking> findByGuestId(Long guestId) {
+        String sql = """
+        SELECT id, room_id, start_date, end_date
+        FROM bookings
+        WHERE guest_id = ?
+        """;
+
+        List<Booking> bookings = new ArrayList<>();
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setLong(1, guestId);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Booking b = new Booking();
+                b.id = rs.getLong("id");
+                b.roomId = rs.getLong("room_id");
+                b.startDate = rs.getDate("start_date").toLocalDate();
+                b.endDate = rs.getDate("end_date").toLocalDate();
+                bookings.add(b);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return bookings;
+    }
+
 
 
 }

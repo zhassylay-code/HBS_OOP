@@ -9,4 +9,5 @@ public interface BookingRepository {
     void save(Booking booking);
     void deleteById(Long bookingId);
     List<Booking> findAll();
+    List<Booking> findByGuestId(Long guestId);
 }
