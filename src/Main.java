@@ -9,6 +9,10 @@ import service.BookingService;
 
 import java.sql.Connection;
 
+import controller.RoomController;
+import service.RoomService;
+
+
 public class Main {
 
     public static void main(String[] args) {
@@ -18,6 +22,9 @@ public class Main {
             RoomRepository roomRepo = new RoomRepositoryImpl(conn);
             BookingRepository bookingRepo = new BookingRepositoryImpl(conn);
             GuestRepository guestRepo = new GuestRepositoryImpl(conn);
+            RoomService roomService = new RoomService(roomRepo);
+            RoomController roomController = new RoomController(roomService);
+
 
             BookingService bookingService = new BookingService(bookingRepo, roomRepo);
 
@@ -28,7 +35,7 @@ public class Main {
             GuestController guestController =
                     new GuestController(guestRepo, bookingRepo);
 
-            ConsoleMenu menu = new ConsoleMenu(bookingController, guestController);
+            ConsoleMenu menu = new ConsoleMenu(bookingController, guestController, roomController);
             menu.start();
 
         } catch (Exception e) {

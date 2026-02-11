@@ -3,6 +3,9 @@ package service;
 import entity.Booking;
 import entity.Room;
 import entity.Guest;
+import auth.Session;
+import entity.Role;
+
 
 import exception.InvalidBookingDatesException;
 import exception.RoomAlreadyBookedException;
@@ -52,9 +55,13 @@ public class BookingService {
         return room.pricePerNight.multiply(BigDecimal.valueOf(days));
     }
 
+
+
     public void cancelBooking(Long bookingId) {
+        Session.require(Role.ADMIN, Role.MANAGER);
         bookingRepo.deleteById(bookingId);
     }
+
 
 
 }

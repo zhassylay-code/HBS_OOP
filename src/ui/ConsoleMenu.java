@@ -1,26 +1,34 @@
 package ui;
 
+import auth.Session;
 import controller.BookingController;
 import controller.GuestController;
+import controller.RoomController;
+import entity.Booking;
+import entity.Role;
 import exception.InvalidBookingDatesException;
 import exception.RoomAlreadyBookedException;
-import entity.Booking;
 
-import java.time.LocalDate;
-import java.util.Scanner;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
-
+import java.util.Scanner;
 
 public class ConsoleMenu {
 
     private final Scanner scanner = new Scanner(System.in);
     private final BookingController bookingController;
     private final GuestController guestController;
+    private final RoomController roomController;
 
-    public ConsoleMenu(BookingController bookingController, GuestController guestController) {
+    public ConsoleMenu(
+            BookingController bookingController,
+            GuestController guestController,
+            RoomController roomController
+    ) {
         this.bookingController = bookingController;
         this.guestController = guestController;
+        this.roomController = roomController;
     }
 
     private void Header(String title) {
@@ -32,8 +40,11 @@ public class ConsoleMenu {
     private String paymentMethodToString(int choice) {
         return choice == 1 ? "Card" : "Cash";
     }
+
     public void start() {
         System.out.println("Welcome to the Grand hotel! How can we help you?");
+
+        loginMenu();
 
         while (true) {
             printMenu();
@@ -51,23 +62,74 @@ public class ConsoleMenu {
                     System.out.println("Thank you for choosing our Grand hotel! We would be glad to see you again!");
                     return;
                 }
+                case 5 -> addRoom();
+                case 6 -> updateRoomPrice();
+                case 7 -> deleteRoom();
                 default -> System.out.println("Invalid option. Please try again.");
             }
         }
     }
 
+    private void loginMenu() {
+        System.out.println("\nLogin type:");
+        System.out.println("1. Guest (simple login)");
+        System.out.println("2. Admin / Manager (password)");
+        System.out.print("Your choice: ");
+
+        int choice = readInt();
+
+        if (choice == 1) {
+            Session.loginUser();
+            System.out.println("Logged in as USER.");
+            return;
+        }
+
+        if (choice == 2) {
+            System.out.println("1. Admin");
+            System.out.println("2. Manager");
+            System.out.print("Choose role: ");
+            int roleChoice = readInt();
+
+            Role role = (roleChoice == 1) ? Role.ADMIN : Role.MANAGER;
+
+            System.out.print("Enter password: ");
+            String password = scanner.nextLine().trim();
+
+            try {
+                Session.loginAdminOrManager(role, password);
+                System.out.println("Logged in as " + role + ".");
+            } catch (SecurityException e) {
+                System.out.println("Wrong password. Logged in as USER.");
+                Session.loginUser();
+            }
+            return;
+        }
+
+        System.out.println("Invalid option. Logged in as USER.");
+        Session.loginUser();
+    }
+
     private void printMenu() {
         System.out.println("\n1. I want to book a room");
         System.out.println("2. I want to see my profile");
-        System.out.println("3. Cancel booking");
+
+        if (Session.getRole() == Role.ADMIN || Session.getRole() == Role.MANAGER) {
+            System.out.println("3. Cancel booking");
+        }
+
         System.out.println("4. Exit");
+
+        if (Session.getRole() == Role.ADMIN) {
+            System.out.println("5. Add room");
+            System.out.println("6. Update room price");
+            System.out.println("7. Delete room");
+        }
 
         System.out.print("Your choice: ");
     }
 
     private void bookRoom() {
         try {
-
             System.out.print("Enter check-in date (YYYY-MM-DD): ");
             LocalDate startDate = LocalDate.parse(scanner.nextLine().trim());
 
@@ -86,13 +148,11 @@ public class ConsoleMenu {
                 return;
             }
 
-
             System.out.println("Available rooms");
             bookingController.showAvailableRooms(startDate, endDate);
 
             System.out.print("\nEnter room ID: ");
             int roomId = readInt();
-
 
             System.out.print("Please enter your full name: ");
             String fullName = scanner.nextLine().trim();
@@ -108,10 +168,8 @@ public class ConsoleMenu {
                 return;
             }
 
-
             BigDecimal price = bookingController.getPrice(roomId, startDate, endDate);
             System.out.println("Total price is: " + price);
-
 
             System.out.println("\nPlease choose payment method:");
             System.out.println("1. Card");
@@ -127,18 +185,11 @@ public class ConsoleMenu {
             Header("Booking confirmation:");
             System.out.println("Guest: " + fullName);
             System.out.println("Room ID: " + roomId);
-            System.out.println("Stay: " + "from "+ startDate + " to " + endDate);
+            System.out.println("Stay: " + "from " + startDate + " to " + endDate);
             System.out.println("Total price: " + price + " KZT");
             System.out.println("Payment method: " + paymentMethodToString(paymentChoice));
 
-            bookingController.bookRoom(
-                    roomId,
-                    fullName,
-                    document,
-                    startDate,
-                    endDate
-            );
-
+            bookingController.bookRoom(roomId, fullName, document, startDate, endDate);
 
             System.out.println("\nBooking request has been successfully created. We are waiting for you!");
 
@@ -150,23 +201,70 @@ public class ConsoleMenu {
             System.out.println("Invalid input. Please try again.");
         }
     }
+
     private int readInt() {
         int value = scanner.nextInt();
         scanner.nextLine();
         return value;
     }
+
     private void cancelBooking() {
-        List<Booking> bookings = bookingController.showAllBookings();
+        try {
+            List<Booking> bookings = bookingController.showAllBookings();
+            if (bookings.isEmpty()) return;
 
+            System.out.print("Enter booking ID to cancel: ");
+            long bookingId = readInt();
 
-        if (bookings.isEmpty()) {
-            return;
+            bookingController.cancelBooking(bookingId);
+
+        } catch (SecurityException e) {
+            System.out.println("Only ADMIN or MANAGER can cancel bookings.");
         }
-
-        System.out.print("Enter booking ID to cancel: ");
-        long bookingId = readInt();
-
-        bookingController.cancelBooking(bookingId);
     }
 
+    private void addRoom() {
+        try {
+            System.out.print("Enter room type: ");
+            String type = scanner.nextLine().trim();
+
+            System.out.print("Enter price per night: ");
+            BigDecimal price = new BigDecimal(scanner.nextLine().trim());
+
+            roomController.addRoom(type, price);
+        } catch (SecurityException e) {
+            System.out.println("Only ADMIN can add rooms.");
+        } catch (Exception e) {
+            System.out.println("Invalid input.");
+        }
+    }
+
+    private void updateRoomPrice() {
+        try {
+            System.out.print("Enter room ID: ");
+            long id = readInt();
+
+            System.out.print("Enter new price per night: ");
+            BigDecimal price = new BigDecimal(scanner.nextLine().trim());
+
+            roomController.updateRoomPrice(id, price);
+        } catch (SecurityException e) {
+            System.out.println("Only ADMIN can update room prices.");
+        } catch (Exception e) {
+            System.out.println("Invalid input.");
+        }
+    }
+
+    private void deleteRoom() {
+        try {
+            System.out.print("Enter room ID: ");
+            long id = readInt();
+
+            roomController.deleteRoom(id);
+        } catch (SecurityException e) {
+            System.out.println("Only ADMIN can delete rooms.");
+        } catch (Exception e) {
+            System.out.println("Invalid input.");
+        }
+    }
 }
