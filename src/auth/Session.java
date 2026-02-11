@@ -3,6 +3,7 @@ package auth;
 import entity.Role;
 
 public final class Session {
+
     private static Role role = Role.USER;
 
     private Session() {}
@@ -15,17 +16,25 @@ public final class Session {
         role = Role.USER;
     }
 
+
     public static void loginAdminOrManager(Role newRole, String password) {
-        if (newRole != Role.ADMIN && newRole != Role.MANAGER) {
-            throw new IllegalArgumentException("Only ADMIN or MANAGER allowed.");
+        if (newRole == Role.ADMIN) {
+            if (!"admin123!".equals(password)) {
+                throw new SecurityException("Wrong admin password");
+            }
+            role = Role.ADMIN;
+            return;
         }
 
-
-        if (!"1234".equals(password)) {
-            throw new SecurityException("Wrong password");
+        if (newRole == Role.MANAGER) {
+            if (!"manager123!".equals(password)) {
+                throw new SecurityException("Wrong manager password");
+            }
+            role = Role.MANAGER;
+            return;
         }
 
-        role = newRole;
+        throw new IllegalArgumentException("Invalid role");
     }
 
     public static void require(Role... allowed) {
