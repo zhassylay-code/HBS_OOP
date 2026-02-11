@@ -30,8 +30,8 @@ public class BookingRepositoryImpl implements BookingRepository {
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setLong(1, roomId);
-            ps.setDate(2, Date.valueOf(end));   // new end
-            ps.setDate(3, Date.valueOf(start)); // new start
+            ps.setDate(2, Date.valueOf(end));
+            ps.setDate(3, Date.valueOf(start));
 
             try (ResultSet rs = ps.executeQuery()) {
                 rs.next();
