@@ -68,13 +68,13 @@ public class BookingController {
     }
 
 
-    public BigDecimal bookRoom(int roomId,
-                               String fullName,
-                               String document,
-                               LocalDate start,
-                               LocalDate end) {
+    public Guest bookRoom(int roomId,
+                          String fullName,
+                          String document,
+                          LocalDate start,
+                          LocalDate end){
 
-        Room room = roomRepo.findById((long) roomId);
+    Room room = roomRepo.findById((long) roomId);
         if (room == null) {
             throw new RuntimeException("Room not found");
         }
@@ -88,14 +88,16 @@ public class BookingController {
             guest = guestRepo.save(guest);
         }
 
-        return bookingService.bookRoom(room, guest, start, end);
+        bookingService.bookRoom(room, guest, start, end);
+        return guest;
+
+
+
+
     }
-
-
     public void cancelBooking(long bookingId) {
         bookingService.cancelBooking(bookingId);
-        System.out.println("Booking has been successfully cancelled.");
-    }
+        System.out.println("Booking has been successfully cancelled.");}
 
     public List<Booking> showAllBookings() {
         List<Booking> bookings = bookingRepo.findAll();

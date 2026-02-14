@@ -5,6 +5,7 @@ import controller.BookingController;
 import controller.GuestController;
 import controller.RoomController;
 import entity.Booking;
+import entity.Guest;
 import entity.Role;
 import exception.InvalidBookingDatesException;
 import exception.RoomAlreadyBookedException;
@@ -226,15 +227,24 @@ public class ConsoleMenu {
                 System.out.println("Invalid payment method.");
                 return;
             }
+            Guest guest = bookingController.bookRoom(
+                    roomId,
+                    fullName,
+                    document,
+                    startDate,
+                    endDate
+            );
 
             Header("Booking confirmation:");
             System.out.println("Guest: " + fullName);
+            System.out.println("Guest ID: " + guest.id);
             System.out.println("Room ID: " + roomId);
             System.out.println("Stay: " + "from " + startDate + " to " + endDate);
             System.out.println("Total price: " + price + " KZT");
             System.out.println("Payment method: " + paymentMethodToString(paymentChoice));
 
-            bookingController.bookRoom(roomId, fullName, document, startDate, endDate);
+
+
 
             System.out.println("\nBooking request has been successfully created. We are waiting for you!");
 

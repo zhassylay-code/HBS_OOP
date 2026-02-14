@@ -4,7 +4,6 @@ import entity.Booking;
 import entity.Guest;
 import repository.BookingRepository;
 import repository.GuestRepository;
-import ui.ConsoleMenu;
 
 
 import java.util.List;
