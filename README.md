@@ -49,6 +49,7 @@ User Interface & Controllers
     ▫️User interaction flow
     ▫️Input validation
     ▫️Booking confirmation output
+    ▫️Finding guest in batabase
     ▫️UX improvements and readable console output
     ▫️Integration between UI and Service layers (BookingController, GuestController)
     ▫️ReadMe design 
@@ -76,3 +77,7 @@ The application follows a layered architecture:
    
     [!NOTE]
     Use the same database credentials in Main.java.
+
+
+## 📋 Presentation
+the link: 
