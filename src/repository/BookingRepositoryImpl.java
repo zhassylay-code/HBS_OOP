@@ -44,20 +44,26 @@ public class BookingRepositoryImpl implements BookingRepository {
 
     @Override
     public void save(Booking booking) {
+
         String sql = """
-            INSERT INTO bookings (room_id, start_date, end_date)
-            VALUES (?, ?, ?)
-            """;
+        INSERT INTO bookings (room_id, guest_id, start_date, end_date)
+        VALUES (?, ?, ?, ?)
+    """;
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
+
             ps.setLong(1, booking.roomId);
-            ps.setDate(2, Date.valueOf(booking.startDate));
-            ps.setDate(3, Date.valueOf(booking.endDate));
+            ps.setLong(2, booking.guestId);
+            ps.setDate(3, java.sql.Date.valueOf(booking.startDate));
+            ps.setDate(4, java.sql.Date.valueOf(booking.endDate));
+
             ps.executeUpdate();
+
         } catch (SQLException e) {
             throw new RuntimeException("Error saving booking", e);
         }
     }
+
 
     @Override
     public void deleteById(Long bookingId) {
@@ -111,6 +117,7 @@ public class BookingRepositoryImpl implements BookingRepository {
                 Booking b = new Booking();
                 b.id = rs.getLong("id");
                 b.roomId = rs.getLong("room_id");
+                b.guestId = rs.getLong("guest_id");
                 b.startDate = rs.getDate("start_date").toLocalDate();
                 b.endDate = rs.getDate("end_date").toLocalDate();
                 bookings.add(b);
