@@ -30,7 +30,10 @@ public class ConsoleMenu {
         this.guestController = guestController;
         this.roomController = roomController;
     }
-
+    private void exit(){
+        System.out.println("Thank you for choosing our Grand hotel! We would be glad to see you again!");
+        return;
+    }
     private void Header(String title) {
         System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
         System.out.println(title.toUpperCase());
@@ -42,38 +45,97 @@ public class ConsoleMenu {
     }
 
     public void start() {
-        System.out.println("Welcome to the Grand hotel! How can we help you?");
+        System.out.println("Welcome to the Grand Hotel!");
 
         loginMenu();
 
         while (true) {
-            printMenu();
-            int choice = readInt();
-
-            switch (choice) {
-                case 1 -> bookRoom();
-                case 2 -> {
-                    System.out.print("Enter your guest ID: ");
-                    long guestId = readInt();
-                    guestController.showProfile(guestId);
-                }
-                case 3 -> cancelBooking();
-                case 4 -> {
-                    System.out.println("Thank you for choosing our Grand hotel! We would be glad to see you again!");
-                    return;
-                }
-                case 5 -> addRoom();
-                case 6 -> updateRoomPrice();
-                case 7 -> deleteRoom();
-                default -> System.out.println("Invalid option. Please try again.");
+            switch (Session.getRole()) {
+                case USER -> userMenu();
+                case MANAGER -> managerMenu();
+                case ADMIN -> adminMenu();
             }
         }
     }
 
+    private void userMenu() {
+        Header("Menu:");
+        System.out.println("1. I want to book a room");
+        System.out.println("2. I want to view my profile");
+        System.out.println("3. Exit");
+        System.out.print("The choice: ");
+
+        int choice = readInt();
+
+        switch (choice) {
+            case 1 -> bookRoom();
+            case 2 -> {
+                System.out.print("Enter your guest ID: ");
+                long guestId = readInt();
+                guestController.showProfile(guestId);
+            }
+            case 3 -> exit();
+            default -> System.out.println("Invalid option. Please try again.");
+        }
+    }
+
+    private void managerMenu() {
+        Header("Menu:");
+        System.out.println("1. Book a room for guest");
+        System.out.println("2. View guest profile");
+        System.out.println("3. Cancel booking");
+        System.out.println("4. Exit");
+        System.out.print("The choice: ");
+
+        int choice = readInt();
+
+        switch (choice) {
+            case 1 -> bookRoom();
+            case 2 -> {
+                System.out.print("Enter guest ID: ");
+                long guestId = readInt();
+                guestController.showProfile(guestId);
+            }
+            case 3 -> cancelBooking();
+            case 4 -> exit();
+            default -> System.out.println("Invalid option.");
+        }
+    }
+
+    private void adminMenu() {
+        Header("Menu: ");
+        System.out.println("1. Book a room");
+        System.out.println("2. View guest profile");
+        System.out.println("3. Cancel booking");
+        System.out.println("4. Add a room");
+        System.out.println("5. Update a room price");
+        System.out.println("6. Delete a room");
+        System.out.println("7. Exit");
+        System.out.print("The choice: ");
+
+        int choice = readInt();
+
+        switch (choice) {
+            case 1 -> bookRoom();
+            case 2 -> {
+                System.out.print("Enter guest ID: ");
+                long guestId = readInt();
+                guestController.showProfile(guestId);
+            }
+            case 3 -> cancelBooking();
+            case 4 -> addRoom();
+            case 5 -> updateRoomPrice();
+            case 6 -> deleteRoom();
+            case 7 -> exit();
+            default -> System.out.println("Invalid option.");
+        }
+    }
+
+
     private void loginMenu() {
         System.out.println("\nLogin type:");
-        System.out.println("1. Guest (simple login)");
-        System.out.println("2. Admin / Manager (password)");
+        System.out.println("1. Guest");
+        System.out.println("2. Admin / Manager");
         System.out.print("Your choice: ");
 
         int choice = readInt();
@@ -109,24 +171,7 @@ public class ConsoleMenu {
         Session.loginUser();
     }
 
-    private void printMenu() {
-        System.out.println("\n1. I want to book a room");
-        System.out.println("2. I want to see my profile");
 
-        if (Session.getRole() == Role.ADMIN || Session.getRole() == Role.MANAGER) {
-            System.out.println("3. Cancel booking");
-        }
-
-        System.out.println("4. Exit");
-
-        if (Session.getRole() == Role.ADMIN) {
-            System.out.println("5. Add room");
-            System.out.println("6. Update room price");
-            System.out.println("7. Delete room");
-        }
-
-        System.out.print("Your choice: ");
-    }
 
     private void bookRoom() {
         try {
