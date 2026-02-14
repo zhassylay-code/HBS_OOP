@@ -32,7 +32,7 @@ public class ConsoleMenu {
     }
     private void exit(){
         System.out.println("Thank you for choosing our Grand hotel! We would be glad to see you again!");
-        return;
+        System.exit(0);
     }
     private void Header(String title) {
         System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
